@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Inbox — wyślij prompt do agenta</title>
+<meta name="description" content="Zdalna skrzynka promptów: wybierz projekt, wpisz prompt i wyślij go agentowi AI. Trafia do GitHub Issues, skąd agent go odczytuje i realizuje.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
+<style>
+  :root {
+    --bg: #0f172a;
+    --bg-2: #1e293b;
+    --card: rgba(30, 41, 59, 0.72);
+    --border: rgba(148, 163, 184, 0.22);
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-2: #a78bfa;
+    --ok: #34d399;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: radial-gradient(1200px 600px at 85% -10%, rgba(56, 189, 248, 0.16), transparent 60%),
+                radial-gradient(1000px 500px at -10% 20%, rgba(167, 139, 250, 0.14), transparent 55%),
+                linear-gradient(180deg, var(--bg) 0%, #0b1120 100%);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 32px 20px 64px; }
+  header { text-align: center; margin-bottom: 28px; }
+  .badge {
+    display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--accent);
+    border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 999px;
+    padding: 4px 12px; margin-bottom: 14px; background: rgba(56, 189, 248, 0.08);
+  }
+  h1 { font-size: clamp(26px, 6vw, 34px); font-weight: 800; letter-spacing: -0.02em; }
+  .sub { color: var(--muted); margin-top: 8px; font-size: 15px; }
+  .lang { margin-top: 10px; display: flex; gap: 8px; justify-content: center; }
+  .lang button {
+    background: transparent; color: var(--muted); border: 1px solid var(--border);
+    border-radius: 999px; padding: 4px 14px; font-size: 13px; cursor: pointer;
+  }
+  .lang button.active { color: var(--accent); border-color: rgba(56, 189, 248, 0.5); background: rgba(56, 189, 248, 0.08); }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  }
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin: 16px 0 6px; letter-spacing: .04em; text-transform: uppercase; }
+  label:first-of-type { margin-top: 0; }
+  select, textarea, input[type=text] {
+    width: 100%; background: rgba(15, 23, 42, 0.7); color: var(--text);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 14px; font-size: 15px; font-family: inherit;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  select:focus, textarea:focus, input[type=text]:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  }
+  textarea { min-height: 150px; resize: vertical; }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+  .hint { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+  .counter { text-align: right; font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .counter.over { color: #f87171; }
+  .submit {
+    width: 100%; margin-top: 20px; padding: 14px; font-size: 16px; font-weight: 700;
+    color: #0b1120; cursor: pointer; border: none; border-radius: 12px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    box-shadow: 0 8px 24px rgba(56, 189, 248, 0.25);
+    transition: transform .1s ease, box-shadow .15s ease;
+  }
+  .submit:active { transform: translateY(1px); }
+  .submit:disabled { opacity: .5; cursor: not-allowed; }
+  .error { color: #f87171; font-size: 13px; margin-top: 8px; display: none; }
+  .steps { margin-top: 26px; display: grid; gap: 10px; }
+  .step {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; font-size: 14px;
+  }
+  .step b { color: var(--accent); font-size: 15px; min-width: 22px; }
+  .step p { color: var(--muted); }
+  .step p b { color: var(--text); font-size: 14px; }
+  footer { margin-top: 28px; text-align: center; font-size: 13px; color: var(--muted); }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  .ok-box {
+    display: none; margin-top: 18px; padding: 14px 16px; border-radius: 12px;
+    background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.35);
+    color: var(--ok); font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="badge">🎯 Prompt Inbox</span>
+    <h1 data-pl="Wyślij prompt do swojego agenta" data-en="Send a prompt to your agent">Wyślij prompt do swojego agenta</h1>
+    <p class="sub" data-pl="Z dowolnego urządzenia — telefon, tablet, inny komputer. Prompt trafia do GitHub Issues, skąd agent go odczytuje i realizuje." data-en="From any device — phone, tablet, another computer. The prompt lands in GitHub Issues, where the agent reads and handles it.">Z dowolnego urządzenia — telefon, tablet, inny komputer. Prompt trafia do GitHub Issues, skąd agent go odczytuje i realizuje.</p>
+    <div class="lang">
+      <button id="lang-pl" class="active">Polski</button>
+      <button id="lang-en">English</button>
+    </div>
+  </header>
+
+  <div class="card">
+    <form id="prompt-form" novalidate>
+      <label for="project" data-pl="Projekt" data-en="Project">Projekt</label>
+      <select id="project" name="project">
+        <option value="Docs" data-repo="BartoszOsiej/Docs">Docs — dokumentacja &amp; portal</option>
+        <option value="N2 Mesh" data-repo="BartoszOsiej/n2-mesh">N2 Mesh — czat P2P (WebRTC)</option>
+        <option value="LinkShort (FastAPI)" data-repo="BartoszOsiej/FastAPI-url">LinkShort — skracacz URL (FastAPI)</option>
+        <option value="Novactorio (Factorio Web)" data-repo="BartoszOsiej/Factorio-web-game">Novactorio — gra (Factorio Web)</option>
+        <option value="NV2 Engine" data-repo="BartoszOsiej/NV2_ENGINE">NV2 Engine — silnik voxelowy (Rust)</option>
+        <option value="AURORA OS" data-repo="BartoszOsiej/AURORA-OS">AURORA OS — system w przeglądarce</option>
+        <option value="Cybersec Toolkit" data-repo="BartoszOsiej/cybersec-tools">Cybersec Toolkit (Rust)</option>
+        <option value="Halcyon Process Monitor" data-repo="BartoszOsiej/halcyon-process-monitor">Halcyon — monitor procesów (eBPF)</option>
+        <option value="Externum" data-repo="BartoszOsiej/externum">Externum — język programowania</option>
+        <option value="Inny / ogólny" data-repo="">Inny / ogólny</option>
+      </select>
+
+      <label for="prompt" data-pl="Twój prompt" data-en="Your prompt">Twój prompt</label>
+      <textarea id="prompt" name="prompt" maxlength="4000"
+        data-pl="Np. „Dodaj ciemny motyw do strony głównej” albo „Napraw błąd z zapisem gry”…"
+        data-en="E.g. “Add a dark theme to the landing page” or “Fix the save-game bug”…"
+        placeholder="Np. „Dodaj ciemny motyw do strony głównej” albo „Napraw błąd z zapisem gry”…"></textarea>
+      <div class="counter"><span id="count">0</span>/4000</div>
+
+      <label for="context" data-pl="Kontekst (opcjonalnie)" data-en="Context (optional)">Kontekst (opcjonalnie)</label>
+      <input type="text" id="context" name="context" maxlength="500"
+        data-pl="Np. link do strony, numer wersji, co już próbowałeś…"
+        data-en="E.g. a link, version number, what you already tried…"
+        placeholder="Np. link do strony, numer wersji, co już próbowałeś…">
+
+      <button type="submit" class="submit" id="submit-btn" data-pl="Otwórz GitHub i wyślij prompt" data-en="Open GitHub and send prompt">Otwórz GitHub i wyślij prompt</button>
+      <div class="error" id="error" data-pl="Wpisz prompt (co najmniej 10 znaków), zanim wyślesz." data-en="Write a prompt (at least 10 characters) before sending.">Wpisz prompt (co najmniej 10 znaków), zanim wyślesz.</div>
+      <div class="ok-box" id="ok-box"></div>
+    </form>
+  </div>
+
+  <div class="steps">
+    <div class="step"><b>1</b><p data-pl="Wypełnij formularz — wybierz projekt i wpisz prompt." data-en="Fill in the form — pick a project and write your prompt."><b>Wypełnij formularz</b> — wybierz projekt i wpisz prompt.</p></div>
+    <div class="step"><b>2</b><p data-pl="Otworzy się GitHub z gotowym zgłoszeniem. Kliknij „Submit new issue”." data-en="GitHub opens with a ready-made issue. Click “Submit new issue”."><b>GitHub</b> — otworzy się gotowe zgłoszenie. Kliknij „Submit new issue”.</p></div>
+    <div class="step"><b>3</b><p data-pl="Prompt czeka w <b>BartoszOsiej/prompt-inbox</b> — agent go odczytuje, realizuje i zamyka." data-en="The prompt waits in <b>BartoszOsiej/prompt-inbox</b> — the agent reads it, handles it and closes it."><b>Realizacja</b> — prompt czeka w <b>BartoszOsiej/prompt-inbox</b>; agent go odczytuje, realizuje i zamyka.</p></div>
+    <div class="step"><b>4</b><p data-pl="Odpowiedź zobaczysz w czacie z agentem." data-en="You will see the answer in your chat with the agent."><b>Odpowiedź</b> — zobaczysz ją w czacie z agentem.</p></div>
+  </div>
+
+  <footer>
+    <a href="https://github.com/BartoszOsiej/prompt-inbox" target="_blank" rel="noopener">github.com/BartoszOsiej/prompt-inbox</a>
+    &nbsp;·&nbsp;
+    <a href="https://bartoszosiej.github.io/Docs/" data-pl="Portal dokumentacji" data-en="Documentation portal">Portal dokumentacji</a>
+  </footer>
+</div>
+
+<script>
+  const PROJECTS = {
+    'Docs': 'BartoszOsiej/Docs',
+    'N2 Mesh': 'BartoszOsiej/n2-mesh',
+    'LinkShort (FastAPI)': 'BartoszOsiej/FastAPI-url',
+    'Novactorio (Factorio Web)': 'BartoszOsiej/Factorio-web-game',
+    'NV2 Engine': 'BartoszOsiej/NV2_ENGINE',
+    'AURORA OS': 'BartoszOsiej/AURORA-OS',
+    'Cybersec Toolkit': 'BartoszOsiej/cybersec-tools',
+    'Halcyon Process Monitor': 'BartoszOsiej/halcyon-process-monitor',
+    'Externum': 'BartoszOsiej/externum',
+    'Inny / ogólny': ''
+  };
+  const REPO = 'BartoszOsiej/prompt-inbox';
+  const NEW_ISSUE_URL = 'https://github.com/' + REPO + '/issues/new';
+
+  const form = document.getElementById('prompt-form');
+  const promptEl = document.getElementById('prompt');
+  const contextEl = document.getElementById('context');
+  const projectEl = document.getElementById('project');
+  const countEl = document.getElementById('count');
+  const errorEl = document.getElementById('error');
+  const okBox = document.getElementById('ok-box');
+  const btn = document.getElementById('submit-btn');
+
+  promptEl.addEventListener('input', () => {
+    countEl.textContent = promptEl.value.length;
+    countEl.parentElement.classList.toggle('over', promptEl.value.length > 3500);
+    errorEl.style.display = 'none';
+  });
+
+  // PL/EN toggle
+  const setLang = (lang) => {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-pl], [data-en]').forEach(el => {
+      const key = lang === 'pl' ? 'data-pl' : 'data-en';
+      if (el.hasAttribute(key)) {
+        if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
+          if (el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && el.placeholder)) {
+            el.placeholder = el.getAttribute(key);
+          }
+        } else if (el.tagName === 'BUTTON' || el.classList.contains('lang')) {
+          // handled below / skipped
+        } else {
+          el.innerHTML = el.getAttribute(key);
+        }
+      }
+    });
+    btn.textContent = btn.getAttribute(lang === 'pl' ? 'data-pl' : 'data-en');
+    errorEl.textContent = errorEl.getAttribute(lang === 'pl' ? 'data-pl' : 'data-en');
+    document.getElementById('lang-pl').classList.toggle('active', lang === 'pl');
+    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  };
+  document.getElementById('lang-pl').addEventListener('click', () => setLang('pl'));
+  document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const prompt = promptEl.value.trim();
+    const context = contextEl.value.trim();
+    const project = projectEl.value;
+    const repo = PROJECTS[project] || '';
+
+    if (prompt.length < 10) {
+      errorEl.style.display = 'block';
+      promptEl.focus();
+      return;
+    }
+
+    // Title: [Project] first words of the prompt
+    const firstLine = prompt.split(/\n/)[0].trim();
+    const short = firstLine.length > 60 ? firstLine.slice(0, 60).trimEnd() + '…' : firstLine;
+    const title = '[' + project + '] ' + short;
+
+    const date = new Date().toLocaleString('pl-PL', { dateStyle: 'long', timeStyle: 'short' });
+    const bodyLines = [
+      '## 🎯 Prompt',
+      '',
+      prompt,
+      '',
+      '## 📁 Projekt',
+      '',
+      project + (repo ? ' — repo: ' + repo : ''),
+      '',
+      '## 📅 Wysłano',
+      '',
+      date,
+      '',
+      '---',
+      '',
+      '> Wysłano przez formularz Prompt Inbox. Agent: przetwórz ten prompt i odpowiedz w czacie; po realizacji zamknij to zgłoszenie (lub zostaw komentarz z podsumowaniem).'
+    ];
+    if (context) bodyLines.splice(4, 0, '', '## 🧭 Kontekst', '', context);
+
+    const url = NEW_ISSUE_URL
+      + '?title=' + encodeURIComponent(title)
+      + '&body=' + encodeURIComponent(bodyLines.join('\n'));
+
+    okBox.style.display = 'block';
+    okBox.innerHTML = (document.documentElement.lang === 'pl'
+      ? '✅ Prawie gotowe! GitHub otworzy się w nowej karcie — kliknij tam <b>Submit new issue</b>.'
+      : '✅ Almost done! GitHub opens in a new tab — click <b>Submit new issue</b> there.');
+    window.open(url, '_blank', 'noopener');
+  });
+</script>
+</body>
+</html>
