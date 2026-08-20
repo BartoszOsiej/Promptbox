@@ -97,5 +97,3 @@ workflow needed. Push to `main` and the site updates automatically.
 MIT
 
 ---
-
-> 🤖 Generated with [Codebuff](https://codebuff.com) · [Portfolio](https://bartoszosiej.github.io/Portfolio/)
