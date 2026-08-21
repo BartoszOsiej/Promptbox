@@ -7,7 +7,7 @@
 [![Live](https://img.shields.io/badge/live-GitHub_Pages-2ea043?style=for-the-badge&logo=githubpages)](https://bartoszosiej.github.io/prompt-inbox/)
 ![HTML5](https://img.shields.io/badge/HTML5-zero%20build-E34F26?style=for-the-badge&logo=html5)
 [![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/BartoszOsiej/prompt-inbox/badge)](https://scorecard.dev/viewer/?uri=github.com/BartoszOsiej/prompt-inbox)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/BartoszOsiej/prompt-inbox/badge)](https://securityscorecards.dev/viewer/?uri=github.com/BartoszOsiej/prompt-inbox)
 
 **Remote prompt inbox for the coding agent.**
 
