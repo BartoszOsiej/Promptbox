@@ -33,7 +33,7 @@ flowchart LR
 
 
 
-![Prompt Inbox Demo](assets/prompt-inbox-demo.svg)
+![Prompt Inbox Demo](assets/prompt-inbox-demo.gif)
 
 
 

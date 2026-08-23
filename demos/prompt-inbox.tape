@@ -1,4 +1,4 @@
-Output assets/prompt-inbox-demo.svg
+Output assets/prompt-inbox-demo.gif
 Set FontSize 16
 Set Width 960
 Set Height 420
