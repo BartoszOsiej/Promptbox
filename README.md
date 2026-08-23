@@ -25,6 +25,19 @@ flowchart LR
 > **No tokens, no backend, no database** — the page simply pre-fills
 > `issues/new?title=…&body=…`.
 
+## 📺 Demo
+
+
+
+<!-- VHS auto-rendered — run: vhs demos/prompt-inbox.tape -->
+
+
+
+![Prompt Inbox Demo](assets/prompt-inbox-demo.svg)
+
+
+
+
 ## How it works
 
 1. Open [bartoszosiej.github.io/prompt-inbox](https://bartoszosiej.github.io/prompt-inbox/)
