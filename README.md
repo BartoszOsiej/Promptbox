@@ -1,4 +1,4 @@
-<img src="https://capsule-render.vercel.app/api?type=shark&color=0:0d1117,50:d29922,100:a3d6ff&height=140&section=header&text=Prompt%20Inbox&fontSize=38&fontColor=d29922&desc=send%20a%20prompt%20from%20anywhere%20%C2%B7%20it%20lands%20as%20an%20issue%20%C2%B7%20the%20agent%20handles%20it&descSize=14&descAlignY=72" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=shark&color=0:0d1117,50:d29922,100:a3d6ff&height=140&section=header&text=Promptbox&fontSize=38&fontColor=d29922&desc=send%20a%20prompt%20from%20anywhere%20%C2%B7%20it%20lands%20as%20an%20issue%20%C2%B7%20the%20agent%20handles%20it&descSize=14&descAlignY=72" width="100%" />
 
 <div align="center">
 
