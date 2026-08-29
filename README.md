@@ -3,11 +3,11 @@
 <div align="center">
 
 [![npm](https://img.shields.io/npm/v/prompt-inbox?style=for-the-badge&logo=nodedotjs)](https://www.npmjs.com/package/prompt-inbox)
-[![GHCR](https://img.shields.io/badge/GHCR-image-2496ED?style=for-the-badge&logo=docker)](https://github.com/BartoszOsiej/prompt-inbox/pkgs/container/prompt-inbox)
+[![GHCR](https://img.shields.io/badge/GHCR-image-2496ED?style=for-the-badge&logo=docker)](https://github.com/BartoszOsiej/Promptbox/pkgs/container/prompt-inbox)
 [![Live](https://img.shields.io/badge/live-GitHub_Pages-2ea043?style=for-the-badge&logo=githubpages)](https://bartoszosiej.github.io/prompt-inbox/)
 ![HTML5](https://img.shields.io/badge/HTML5-zero%20build-E34F26?style=for-the-badge&logo=html5)
 [![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/BartoszOsiej/prompt-inbox/badge)](https://scorecard.dev/viewer/?uri=github.com/BartoszOsiej/prompt-inbox)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/BartoszOsiej/Promptbox/badge)](https://scorecard.dev/viewer/?uri=github.com/BartoszOsiej/Promptbox)
 
 **Remote prompt inbox for the coding agent.**
 
@@ -50,7 +50,7 @@ flowchart LR
 
 When the user says something like *"check the inbox"*:
 
-1. Read **open issues**: `https://api.github.com/repos/BartoszOsiej/prompt-inbox/issues?state=open`
+1. Read **open issues**: `https://api.github.com/repos/BartoszOsiej/Promptbox/issues?state=open`
 2. Each issue has: **title** `[Project] summary`, **body** with the prompt
 3. Handle the prompt in the relevant project repo, then **close the issue**
 4. Reply to the user in the chat with what was done
