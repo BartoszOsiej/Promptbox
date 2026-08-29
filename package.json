@@ -1,5 +1,5 @@
 {
-  "name": "promptbox",
+  "name": "prompt-inbox",
   "version": "1.0.0",
   "description": "Remote prompt inbox for the coding agent — static web UI to submit prompts via GitHub Pages",
   "main": "index.html",
